@@ -7,7 +7,11 @@ st.title("Simple Chatbot 🤖")
 # --- USER AUTHENTICATION ---
 # Check for the API key in Streamlit's secrets
 try:
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    # This section is modified to include the base_url
+    client = OpenAI(
+        api_key=st.secrets["OPENAI_API_KEY"],
+        base_url="https://api.chatanywhere.tech/v1"  # This line redirects requests
+    )
 except (FileNotFoundError, KeyError):
     st.error("🔑 OPENAI_API_KEY not found in secrets. Please add it to your Streamlit Cloud settings.")
     st.stop()
