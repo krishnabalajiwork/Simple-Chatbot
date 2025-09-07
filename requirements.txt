@@ -2,6 +2,8 @@ streamlit
 openai
 PyPDF2
 langchain
-langchain-community        # <-- NEW
+langchain-community
 faiss-cpu
 tiktoken
+sentence-transformers
+torch
