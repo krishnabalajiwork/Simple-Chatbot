@@ -2,13 +2,15 @@
 Streamlit Mini PDF-Q&A  (single-file edition)
 Upload a PDF → ask questions → answers come ONLY from the PDF.
 Uses an in-memory FAISS index → no external DB → free & instant.
+Embeddings: open-source Sentence-Transformers (no OpenAI quota needed).
+Chat: still uses your free OpenAI-compatible API.
 """
 import streamlit as st
 from openai import OpenAI
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import OpenAIEmbeddings
+from langchain.embeddings import HuggingFaceEmbeddings
 
 # ---------- PAGE ----------
 st.set_page_config(page_title="PDF-Q&A Bot", page_icon="📄")
@@ -28,13 +30,10 @@ def parse_pdf(file):
     text = "\n".join(page.extract_text() or "" for page in reader.pages)
     return text, len(reader.pages)
 
+@st.cache_resource(show_spinner=False)   # cache model load
 def get_embeddings():
-    # use official endpoint for embeddings (chat-anywhere proxy lacks /embeddings)
-    return OpenAIEmbeddings(
-        openai_api_key=openai_key,
-        api_base="https://api.openai.com/v1",
-        model="text-embedding-3-small",
-    )
+    # free, local, open-source: 384-d vectors, ~14 MB first download
+    return HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 @st.cache_data(show_spinner=False)
 def build_vectorstore(text):
@@ -94,8 +93,11 @@ if prompt := st.chat_input("Ask a question about the PDF"):
     )
     qa_prompt = f"Context:\n{context}\n\nQuestion:\n{prompt}"
 
-    # stream answer
-    client = OpenAI(api_key=openai_key)
+    # stream answer (still uses your free chat API)
+    client = OpenAI(
+        api_key=openai_key,
+        base_url="https://api.chatanywhere.tech/v1"  # ← your free proxy
+    )
     with st.chat_message("assistant"):
         stream = client.chat.completions.create(
             model="gpt-3.5-turbo",
