@@ -1,2 +1,6 @@
 streamlit
 openai
+PyPDF2
+langchain  # only for text-splitter & FAISS wrapper
+faiss-cpu  # 100 % local, no Docker, no sign-up
+tiktoken   # tokenizer used by LangChain
