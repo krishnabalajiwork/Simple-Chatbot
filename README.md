@@ -21,7 +21,7 @@
 - **Chunking**: LangChain `RecursiveCharacterTextSplitter`
 - **Embeddings**: Hugging-Face `sentence-transformers/all-MiniLM-L6-v2` (free, offline)
 - **Vector DB**: FAISS (in-memory, zero external infra)
-- **Chat**: any OpenAI-compatible API (default: free Chat-Anywhere proxy)
+- **Chat**: any OpenAI-compatible API
 
 ## ⚙️ 1-Minute Local Run
 ```bash
