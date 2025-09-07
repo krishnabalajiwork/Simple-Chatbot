@@ -105,5 +105,9 @@ if prompt := st.chat_input("Ask a question about the PDF"):
                       {"role": "user", "content": qa_prompt}],
             stream=True,
         )
-        full = st.write_stream(chunk.choices[0].delta.content or "" for chunk in stream)
+        full = st.write_stream(
+            (chunk.choices[0].delta.content or "")
+            for chunk in stream
+            if chunk.choices and len(chunk.choices) > 0 and chunk.choices[0].delta
+        )
         st.session_state.messages.append({"role": "assistant", "content": full})
